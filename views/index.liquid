@@ -9,14 +9,15 @@
         <link rel="stylesheet" href="">
     </head>
     <body>
-        <h1>THE BLOG</h1>
+        <h1>THE Blog</h1>
         <ul>
             {% for txt in data%}
-            <ul>{{txt.blog_id}} - {{txt.blog_txt}}  </ul>
+            <ul>{{txt.blog_id}} - {{txt.blog_txt}}</ul>
             {% endfor%}
         </ul>
 
         <hr>
+
         <h2>Post a blog</h2>
         <form action="/add" method="POST">
             <div>
@@ -29,16 +30,34 @@
                 <button>Send my blog</button>
             </div>
         </form>
+
         <hr>
+
+         <form action="/update" method="POST">
+            <div>
+                <label for="blog">Edit blog post:</label>
+            </div>
+            <div>
+                <textarea name="blog" id="blog" rows="3" cols="40"></textarea>
+            </div>
+            <div>
+                <button>Send my blog</button>
+            </div>
+        </form>       
+
+        <hr>
+
         <h2>Delete blog post</h2>
-                <form action="/delete" method="POST">
+        <form action="/delete" method="POST">
             <div>
                 <label for="blog">DELETE blog post (enter post #):</label>
-                <input name="blog" id="blog" value="1" />
+                <input name="blog" id="blog"/>
             </div>
             <div>
                 <button>delete my blog</button>
             </div>
         </form>
+
+
     </body>
 </html>
