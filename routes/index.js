@@ -18,19 +18,19 @@ router.get('/', function (req, res, next) {
             console.log("Table exists!");
             db.all(` select blog_id, blog_txt from blog`, (err, rows) => {
               console.log("returning " + rows.length + " records");
-              res.render('index', { title: 'Express', data: rows });
+              res.render('index', { title: 'Blog', data: rows });
             });
           } else {
             console.log("Creating table and inserting some sample data");
-            db.exec(`create table blog (
+            db.exec(`CREATE table blog (
                      blog_id INTEGER PRIMARY KEY AUTOINCREMENT,
                      blog_txt text NOT NULL);
-                      insert into blog (blog_txt)
+                      INSERT into blog (blog_txt)
                       values ('This is a great blog'),
                              ('Oh my goodness blogging is fun');`,
               () => {
                 db.all(` select blog_id, blog_txt from blog`, (err, rows) => {
-                  res.render('index', { title: 'Express', data: rows });
+                  res.render('index', { title: 'Blog', data: rows });
                 });
               });
           }
@@ -39,7 +39,7 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/add', (req, res, next) => {
-  console.log("Adding blog to table without sanitizing input! YOLO BABY!!");
+  console.log("Adding (sanitized) blog entry to table")
   var db = new sqlite3.Database('mydb.sqlite3',
     sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
     (err) => {
@@ -49,11 +49,11 @@ router.post('/add', (req, res, next) => {
       }
       console.log("inserting " + req.body.blog);
       //NOTE: This is dangerous! you need to sanitize input from the user
-      //this is ripe for a exploit! DO NOT use this in production :)
-      //Try and figure out how why this is unsafe and how to fix it.
-      //HINT: the answer is in the XKCD comic on the home page little bobby tables :)
-      db.exec(`insert into blog ( blog_txt)
-                values ('${req.body.blog}');`)
+      //db.exec(`insert into blog ( blog_txt) values ('${req.body.blog}');`)
+
+      // sanitized statement
+      db.run('INSERT into blog (blog_txt) VALUES (?);', req.body.blog);
+      db.close();
       //redirect to homepage
       res.redirect('/');
     }
@@ -69,12 +69,13 @@ router.post('/delete', (req, res, next) => {
         console.log("Getting error " + err);
         exit(1);
       }
-      console.log("inserting " + req.body.blog);
+      console.log("Deleting blog post # " + req.body.blog);
       //NOTE: This is dangerous! you need to sanitize input from the user
-      //this is ripe for a exploit! DO NOT use this in production :)
-      //Try and figure out how why this is unsafe and how to fix it.
-      //HINT: the answer is in the XKCD comic on the home page little bobby tables :)
-      db.exec(`delete from blog where blog_id='${req.body.blog}';`);     
+      //db.exec(`delete from blog where blog_id='${req.body.blog}';`);
+      
+      // sanitized statement
+      db.run('DELETE from blog WHERE blog_id=(?)', req.body.blog)
+      db.close();
       res.redirect('/');
     }
   );
