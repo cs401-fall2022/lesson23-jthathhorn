@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<html lang="en">
+
 <html>
     <head>
         <meta charset="utf-8">
@@ -6,19 +8,32 @@
         <title>{{title}}</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
+        <link rel="stylesheet" type="text/css" href="http://localhost:3000/stylesheets/style.css" >
+
     </head>
     <body>
-        <h1>THE Blog</h1>
-        <ul>
-            {% for txt in data%}
-            <ul>{{txt.blog_id}} - {{txt.blog_txt}}</ul>
+    <div>
+    
+        <h1>The Blog</h1>
+
+        <div id="container_blog">
+            {% for record in data%}
+                <div class="blog_element">
+                    
+                    <p style="font-size: smaller">Blog # {{record.blog_id}}</p> <!-- ADD blog TITLE HERE (use SPAN?)*/ -->
+                    <p style="font-size: larger"> ADD blog TITLE HERE </p>
+                    <p style="text-align: center"> 
+                        {{record.blog_txt}}
+                    </p>
+
+
+                </div>
             {% endfor%}
-        </ul>
+        </div>
 
         <hr>
 
-        <h2>Post a blog</h2>
+        <h2>Post a new blog</h2>
         <form action="/add" method="POST">
             <div>
                 <label for="blog">Blog text:</label>
@@ -33,15 +48,31 @@
 
         <hr>
 
+        <h2>Edit a blog post</h2>
          <form action="/update" method="POST">
+            <div>
+                <label for="blog">Blog post # to edit:</label>
+            </div>
+            <br>
+            <div>
+                <textarea name="blog" id="blog" rows="1" cols="6"></textarea>
+            </div>
+            <div>
+                <input type="submit" value="Retrieve Post">
+            </div>
+
+
+<!-- need to have 2 forms ??? -->
+            <br>
             <div>
                 <label for="blog">Edit blog post:</label>
             </div>
             <div>
-                <textarea name="blog" id="blog" rows="3" cols="40"></textarea>
+ <!-- ? correct use of liquid variable for 'value'? (res.body.blog)? -->
+                <textarea name="blog" id="blog" rows="3" cols="40" value="{{existingBlogText}}"></textarea>
             </div>
             <div>
-                <button>Send my blog</button>
+               <!-- <button>Send my blog</button> -->
             </div>
         </form>       
 
@@ -54,10 +85,10 @@
                 <input name="blog" id="blog"/>
             </div>
             <div>
-                <button>delete my blog</button>
+                <button>Delete blog</button>
             </div>
         </form>
 
-
+    </div>
     </body>
 </html>

@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const sqlite3 = require('sqlite3').verbose()
+const sqlite3 = require('sqlite3').verbose();
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -18,7 +18,10 @@ router.get('/', function (req, res, next) {
             console.log("Table exists!");
             db.all(` SELECT blog_id, blog_txt FROM blog`, (err, rows) => {
               console.log("returning " + rows.length + " records");
-              res.render('index', { title: 'Blog', data: rows });
+// ?--what exactly is happening below (in 'render' method)?
+              res.render('index', { title: 'BLog', data: rows });
+        //  db.
+              db.close();
             });
           } else {
             console.log("Creating table and inserting some sample data");
@@ -31,6 +34,7 @@ router.get('/', function (req, res, next) {
               () => {
                 db.all(` SELECT blog_id, blog_txt FROM blog`, (err, rows) => {
                   res.render('index', { title: 'Blog', data: rows });
+                  db.close();
                 });
               });
           }
@@ -67,9 +71,14 @@ router.post('/update', (req, res, next) => {
         console.log("Getting error " + err);
         exit(1);
       }
-      console.log("Deleting blog post # " + req.body.blog);
+
+// ? correct use of identifier? (req.body.blog_num)
+      console.log("Editing blog post # " + req.body.blog);
       // sanitized statement
       db.run('DELETE from blog WHERE blog_id=(?)', req.body.blog)
+      
+      
+      
       db.close();
       res.redirect('/');
     }
@@ -97,11 +106,6 @@ router.post('/delete', (req, res, next) => {
     }
   );
 })
-
-
-
-
-
 
 
 module.exports = router;
