@@ -1,94 +1,166 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en"></html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>{{title}}</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" type="text/css" href="http://localhost:3000/stylesheets/style.css" >
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{{title}}</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="http://localhost:3000/stylesheets/style.css">
+  </head>
 
-    </head>
-    <body>
-    <div>
-    
-        <h1>The Blog</h1>
+  <body>
+    <h1>The Blog</h1>
 
-        <div id="container_blog">
-            {% for record in data%}
-                <div class="blog_element">
-                    
-                    <p style="font-size: smaller">Blog # {{record.blog_id}}</p> <!-- ADD blog TITLE HERE (use SPAN?)*/ -->
-                    <p style="font-size: larger"> ADD blog TITLE HERE </p>
-                    <p style="text-align: center"> 
-                        {{record.blog_txt}}
-                    </p>
+    <div class="main">
+      <div id="nav">
+        <p>this is the nav section</p>
+      </div>
 
+      <div id="container_blog">
+        {% for record in data%}
+          <div class="blog_element">
+            <p style="font-size: smaller">Blog # {{record.blog_id}}</p>
+            <!-- ADD blog TITLE HERE (use SPAN?)*/ -->
+            <p style="font-size: larger">
+              ADD blog TITLE HERE
+            </p>
+            <p id="blog_text">
+              {{record.blog_txt}}
+            </p>
 
-                </div>
-            {% endfor%}
-        </div>
-
-        <hr>
-
-        <h2>Post a new blog</h2>
-        <form action="/add" method="POST">
-            <div>
-                <label for="blog">Blog text:</label>
-            </div>
-            <div>
-                <textarea name="blog" id="blog" rows="3" cols="40"></textarea>
-            </div>
-            <div>
-                <button>Send my blog</button>
-            </div>
-        </form>
-
-        <hr>
-
-        <h2>Edit a blog post</h2>
-         <form action="/update" method="POST">
-            <div>
-                <label for="blog">Blog post # to edit:</label>
-            </div>
-            <br>
-            <div>
-                <textarea name="blog" id="blog" rows="1" cols="6"></textarea>
-            </div>
-            <div>
-                <input type="submit" value="Retrieve Post">
-            </div>
+            <input type="button" class="delete_button" id=" {{record.blog_id}} " name="delete_button" value="DELETE BLOG">
+          <!--<input onclick="deleteBlog( {{record.blog_id}} )" id="delete_button" name=" {{record.blog_id}} " type="submit" value="DELETE blog">
+          -->
+          </div>
+        {% endfor%}
 
 
-<!-- need to have 2 forms ??? -->
-            <br>
-            <div>
-                <label for="blog">Edit blog post:</label>
-            </div>
-            <div>
- <!-- ? correct use of liquid variable for 'value'? (res.body.blog)? -->
-                <textarea name="blog" id="blog" rows="3" cols="40" value="{{existingBlogText}}"></textarea>
-            </div>
-            <div>
-               <!-- <button>Send my blog</button> -->
-            </div>
-        </form>       
+        <!--     <script>
+        const button = document.getElementById('delete_button');
+        // ??create function and pass      button.name ? how to call in html? onClick? action=?
+        button.addEventListener('click', async _ => {
+        try {     
 
-        <hr>
+        const response = await fetch('/delete', {
+        method: 'post',
+        body: {
+        blog_id: name    
 
-        <h2>Delete blog post</h2>
-        <form action="/delete" method="POST">
-            <div>
-                <label for="blog">DELETE blog post (enter post #):</label>
-                <input name="blog" id="blog"/>
-            </div>
-            <div>
-                <button>Delete blog</button>
-            </div>
-        </form>
-
+        }
+        });
+        console.log('Completed!', response);
+        } catch(err) {
+        console.error(`Error: ${err}`);
+        }
+        });
+        </script>
+        -->
+      </div>
     </div>
-    </body>
+    <hr>
+
+
+    <h2>Post a new blog</h2>
+    <form action="/add" method="POST">
+      <div>
+        <label for="blog">Blog text:</label>
+      </div>
+      <div>
+        <textarea name="blog" id="blog" rows="3" cols="40"></textarea>
+      </div>
+      <div>
+        <button>Send my blog</button>
+      </div>
+    </form>
+
+    <hr>
+
+    <h2>Edit a blog post</h2>
+    <form action="/update" method="POST">
+      <div>
+        <label for="blog">Blog post # to edit:</label>
+      </div>
+      <br>
+      <div>
+        <textarea name="blog" id="blog" rows="1" cols="6"></textarea>
+      </div>
+      <div>
+        <input type="submit" value="Retrieve Post">
+      </div>
+
+
+      <!-- need to have 2 forms ??? -->
+      <br>
+      <div>
+        <label for="blog">Edit blog post:</label>
+      </div>
+      <div>
+        <!-- ? correct use of liquid variable for 'value'? (res.body.blog)? -->
+        <textarea name="blog" id="blog" rows="3" cols="40" value="{{existingBlogText}}"></textarea>
+      </div>
+      <div>
+        <!-- <button>Send my blog</button> -->
+      </div>
+    </form>
+
+    <hr>
+
+    <!--   <h2>Delete blog post</h2>
+    <form action="/delete" method="POST">
+    <div>
+    <label for="blog">DELETE blog post (enter post #):</label>
+    <input name="blog" id="blog"/>
+    </div>
+    <div>
+    <button>Delete blog</button>
+    </div>
+    </form>
+    --></body>
+  <script>
+    // after HTML is loaded, perform JS actions on content
+    window.addEventListener("DOMContentLoaded", domLoadedHandler);
+    console.log("entering script...");
+
+    function domLoadedHandler() {
+      console.log("DOM content loaded...");
+
+      let deleteButtonS = document.getElementsByClassName("delete_button");
+      for (let i = 0; i < deleteButtonS.length; i++) {
+        deleteButtonS[i].addEventListener("click", deleteClickHandler);
+      }
+
+    }
+
+    async function deleteClickHandler(event) {
+      let button = event.target;
+      console.log("testing for correct blog_id# : " + button.id);
+
+      let data = { "id": button.id, "name" : "delete_button"};
+      let json = JSON.stringify(data);
+      console.log("Body params: "+json);
+     
+      const response = await fetch("/delete", {
+          method: "POST",
+          headers: {
+           // "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          body: 
+            json 
+      });
+// .then? how to refresh the page???
+      if (response.ok) {
+            // Successfully deleted record
+            console.log(response);
+      }
+      else {
+      } 
+    
+
+    }
+
+
+  </script>
 </html>

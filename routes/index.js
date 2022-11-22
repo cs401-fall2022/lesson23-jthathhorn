@@ -77,8 +77,6 @@ router.post('/update', (req, res, next) => {
       // sanitized statement
       db.run('DELETE from blog WHERE blog_id=(?)', req.body.blog)
       
-      
-      
       db.close();
       res.redirect('/');
     }
@@ -89,7 +87,6 @@ router.post('/update', (req, res, next) => {
 router.post('/delete', (req, res, next) => {
 
 // need to validate data before delete?/handle err?
-  console.log("deleting stuff without checking if it is valid! SEND IT!");
   
   var db = new sqlite3.Database('mydb.sqlite3',
     sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
@@ -98,10 +95,13 @@ router.post('/delete', (req, res, next) => {
         console.log("Getting error " + err);
         exit(1);
       }
-      console.log("Deleting blog post # " + req.body.blog);
+
+      console.log(req.body);
+      console.log("Deleting blog post # " + req.body.id);
       // sanitized statement
-      db.run('DELETE from blog WHERE blog_id=(?)', req.body.blog)
-      db.close();
+      db.run('DELETE from blog WHERE blog_id=(?)', req.body.id)
+     // db.close();
+
       res.redirect('/');
     }
   );

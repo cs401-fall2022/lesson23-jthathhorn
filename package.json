@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "devStart": "nodemon app.js",
     "start": "node ./bin/www"
   },
   "dependencies": {
@@ -13,5 +14,8 @@
     "liquidjs": "^9.42.1",
     "morgan": "~1.10.0",
     "sqlite3": "^5.1.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
   }
 }
