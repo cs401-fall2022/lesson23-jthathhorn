@@ -5,6 +5,8 @@ body{
   margin: auto;
   margin-bottom: 3%;
   border: 3px green solid;
+  background-color: black;
+  color: azure;
 }
 
 .main > #nav{
@@ -69,7 +71,18 @@ a {
 }
 
 .blog_element > input{
-  max-width: max-content;
+  width: 120px;
+}
+
+.edit_delete {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.edit_delete .delete_button{
+  background-color: red;
+  color: white;
 }
 
 .blog_element > #blog_text{

@@ -21,46 +21,25 @@
       <div id="container_blog">
         {% for record in data%}
           <div class="blog_element">
-            <p style="font-size: smaller">Blog # {{record.blog_id}}</p>
-            <!-- ADD blog TITLE HERE (use SPAN?)*/ -->
-            <p style="font-size: larger">
+            <p style="font-size: smaller; color: black">Blog # {{record.blog_id}}</p>
+  <!-- ADD blog TITLE HERE (use SPAN?)*/ -->
+            <p style="font-size: larger; color: black">
               ADD blog TITLE HERE
             </p>
             <p id="blog_text">
               {{record.blog_txt}}
             </p>
+            <div class="edit_delete">
+              <input type="button" class="edit_button" id=" {{record.blog_id}} " name="edit_button" value="EDIT BLOG">
 
-            <input type="button" class="delete_button" id=" {{record.blog_id}} " name="delete_button" value="DELETE BLOG">
-          <!--<input onclick="deleteBlog( {{record.blog_id}} )" id="delete_button" name=" {{record.blog_id}} " type="submit" value="DELETE blog">
-          -->
+              <input type="button" class="delete_button" id=" {{record.blog_id}} " name="delete_button" value="DELETE BLOG">
+            </div>
           </div>
         {% endfor%}
 
-
-        <!--     <script>
-        const button = document.getElementById('delete_button');
-        // ??create function and pass      button.name ? how to call in html? onClick? action=?
-        button.addEventListener('click', async _ => {
-        try {     
-
-        const response = await fetch('/delete', {
-        method: 'post',
-        body: {
-        blog_id: name    
-
-        }
-        });
-        console.log('Completed!', response);
-        } catch(err) {
-        console.error(`Error: ${err}`);
-        }
-        });
-        </script>
-        -->
       </div>
     </div>
     <hr>
-
 
     <h2>Post a new blog</h2>
     <form action="/add" method="POST">
@@ -107,17 +86,7 @@
 
     <hr>
 
-    <!--   <h2>Delete blog post</h2>
-    <form action="/delete" method="POST">
-    <div>
-    <label for="blog">DELETE blog post (enter post #):</label>
-    <input name="blog" id="blog"/>
-    </div>
-    <div>
-    <button>Delete blog</button>
-    </div>
-    </form>
-    --></body>
+</body>
   <script>
     // after HTML is loaded, perform JS actions on content
     window.addEventListener("DOMContentLoaded", domLoadedHandler);
@@ -132,7 +101,7 @@
       }
 
     }
-
+    // handler for DELETE button / POST request
     async function deleteClickHandler(event) {
       let button = event.target;
       console.log("testing for correct blog_id# : " + button.id);
@@ -141,7 +110,7 @@
       let json = JSON.stringify(data);
       console.log("Body params: "+json);
      
-      const response = await fetch("/delete", {
+      response = await fetch("/delete", {
           method: "POST",
           headers: {
            // "Accept": "application/json",
@@ -149,18 +118,19 @@
           },
           body: 
             json 
-      });
-// .then? how to refresh the page???
-      if (response.ok) {
-            // Successfully deleted record
-            console.log(response);
-      }
-      else {
+      }).then(() => {
+          window.location.reload();
+        })
+      if(response.ok){
+        console.log(response);
+      } else {
+        console.log("Something went wrong in fetch(delete)");
       } 
+     
+
     
 
     }
-
-
+ 
   </script>
 </html>

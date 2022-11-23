@@ -18,9 +18,12 @@ router.get('/', function (req, res, next) {
             console.log("Table exists!");
             db.all(` SELECT blog_id, blog_txt FROM blog`, (err, rows) => {
               console.log("returning " + rows.length + " records");
-// ?--what exactly is happening below (in 'render' method)?
-              res.render('index', { title: 'BLog', data: rows });
-        //  db.
+              // reverse order of 'rows' array to load newest blogs first
+              let newRows = [];
+              for(i=0; i<rows.length;i++){
+                newRows[i] = rows[(rows.length - 1) - i];
+              }
+              res.render('index', { title: 'Blog', data: newRows });
               db.close();
             });
           } else {
@@ -33,7 +36,12 @@ router.get('/', function (req, res, next) {
                              ('Oh my goodness blogging is fun');`,
               () => {
                 db.all(` SELECT blog_id, blog_txt FROM blog`, (err, rows) => {
-                  res.render('index', { title: 'Blog', data: rows });
+                  // reverse order of 'rows' array to load newest blogs first      
+                  let newRows = [];
+                  for(i=0; i<rows.length;i++){
+                    newRows[i] = rows[(rows.length - 1) - i];
+                  }
+                  res.render('index', { title: 'bloG', data: newRows });
                   db.close();
                 });
               });
@@ -61,7 +69,7 @@ router.post('/add', (req, res, next) => {
   );
 })
 
-// edit??? return err statement if post DNE?
+// edit / update blog post
 router.post('/update', (req, res, next) => {
   console.log("editing blog post...");
   var db = new sqlite3.Database('mydb.sqlite3',
@@ -71,12 +79,9 @@ router.post('/update', (req, res, next) => {
         console.log("Getting error " + err);
         exit(1);
       }
-
-// ? correct use of identifier? (req.body.blog_num)
       console.log("Editing blog post # " + req.body.blog);
       // sanitized statement
       db.run('DELETE from blog WHERE blog_id=(?)', req.body.blog)
-      
       db.close();
       res.redirect('/');
     }
@@ -86,8 +91,8 @@ router.post('/update', (req, res, next) => {
 
 router.post('/delete', (req, res, next) => {
 
-// need to validate data before delete?/handle err?
-  
+// need to validate data before delete?/handle err
+
   var db = new sqlite3.Database('mydb.sqlite3',
     sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
     (err) => {
@@ -95,17 +100,16 @@ router.post('/delete', (req, res, next) => {
         console.log("Getting error " + err);
         exit(1);
       }
-
       console.log(req.body);
       console.log("Deleting blog post # " + req.body.id);
       // sanitized statement
-      db.run('DELETE from blog WHERE blog_id=(?)', req.body.id)
-     // db.close();
+      db.run('DELETE from blog WHERE blog_id=(?)', req.body.id);
+      db.close();
 
       res.redirect('/');
     }
   );
-})
+});
 
 
 module.exports = router;
