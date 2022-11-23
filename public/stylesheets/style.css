@@ -1,106 +1,114 @@
 body{
   min-width: 550px;
   max-width: 95%;
-  /*flex: 2 1 100%;   */
   margin: auto;
   margin-bottom: 3%;
-  border: 3px green solid;
-  background-color: black;
+  /* border: 3px green solid; */
+  background-color: hsl(187, 20%, 17%);
+  font-size: 14pt;
   color: azure;
 }
-
 .main > #nav{
     display: flex;
     gap: 0px;
     flex-direction: column;
     justify-content: center;
-    border: 2px rgb(106, 242, 21) solid;
+    /* border: 2px rgb(106, 242, 21) solid; */
     margin-left: 2px;
-    margin-right: 2px;
-  
+    margin-right: 2px; 
 }
-
-
 body > .main{
   display: flex;
   gap: 0px;
   flex-direction: row;
-  /*justify-content: center;*/
-  border: 3px blue solid;
+  /* border: 3px blue solid; */
   margin-left: 2px;
   margin-right: 2px;
 }
-
 a {
   color: #00B7FF;
 }
-
 .main > #container_blog {
   display: flex;
   flex-direction: column;
   flex-grow: .8;
-  /* flex-direction: row;
-  flex-wrap: wrap; */
-
   justify-content: center;
   gap: 10px;
-  border: 1px rgb(196, 85, 5) solid;
+  /* border: 1px rgb(196, 85, 5) solid; */
   padding-left: 2%;
   padding-right: 2%;
   padding-top: 10px;
   padding-bottom: 10px;
 }
-
 .blog_element{
-
   display: flex;
   flex-direction: column;
   justify-content: center;
-  flex-wrap: wrap;
-  
-  /*min-width: 500px;*/
-  
-  border: 1px rgb(8, 8, 0) solid;
+  border-radius: 10px;
+  border: 3px double rgb(196, 10, 10);
   padding: 0px;
-  background-color: rgb(248, 249, 188);
+  background-color: rgb(235, 236, 221);
 }
-
 .blog_element > p{
   margin: 3px;
   
 }
-
 .blog_element > input{
   width: 120px;
 }
-
 .edit_delete {
+  /*position: relative;*/
   display: flex;
-  flex-direction: row;
   justify-content: flex-end;
 }
-
-.edit_delete .delete_button{
-  background-color: red;
+.edit_delete .delete_button, .edit_cancel{
+  background-color: rgb(196, 10, 10);
   color: white;
 }
-
+.edit_submit{
+  background-color: rgb(49, 166, 51);
+  color: white;
+}
+.form_popup{
+  display: none;
+  position: fixed;
+  bottom: 30px;
+  right: 15px;
+  z-index: 10;
+  padding: 5px;
+  color: black;
+  border-radius: 5px;
+  border: 3px solid rgb(196, 10, 10);
+  background-color: rgb(235, 236, 221);
+}
+.form_container{
+  display: flex;
+  flex-direction: column; 
+}
+.form_container > p{
+  padding: 0;
+  font-size: small; 
+}
+.edit_form_action_buttons{
+  display: flex;
+  justify-content: flex-end;
+}
+.edit_form_action_buttons > button{
+width: 90px;
+}
 .blog_element > #blog_text{
-
-  /*flex-basis: 20%;*/
-  
   margin: 5%;
   color:rgb(1, 25, 17);
-  text-align: left;
+  text-align: left; 
 }
-
 h1{
-  border: 3px solid rgb(196, 10, 10);
-  border-radius: 20px;
-  background-color: hsl(186, 88%, 7%);
-  color: #eaeef0;
+  color: rgb(196, 10, 10);
   font-size: 45px;
   text-align: center;
   margin-bottom: 10px;
   min-width: 200px;
+  text-shadow: -1px 1px 3px rgb(156, 153, 153); 
 }
+
+
+

@@ -12,27 +12,43 @@
 
   <body>
     <h1>The Blog</h1>
-
+    <hr>
     <div class="main">
       <div id="nav">
-        <p>this is the nav section</p>
+        <p>NAV SECTION---plan to put blog title links here</p>
       </div>
 
       <div id="container_blog">
         {% for record in data%}
           <div class="blog_element">
-            <p style="font-size: smaller; color: black">Blog # {{record.blog_id}}</p>
+            <p style="font-size: smaller; color: black"># {{record.blog_id}}</p>
   <!-- ADD blog TITLE HERE (use SPAN?)*/ -->
             <p style="font-size: larger; color: black">
               ADD blog TITLE HERE
             </p>
-            <p id="blog_text">
-              {{record.blog_txt}}
-            </p>
-            <div class="edit_delete">
-              <input type="button" class="edit_button" id=" {{record.blog_id}} " name="edit_button" value="EDIT BLOG">
+            <p id="blog_text">{{record.blog_txt}}</p>
 
-              <input type="button" class="delete_button" id=" {{record.blog_id}} " name="delete_button" value="DELETE BLOG">
+            <div class="edit_delete">
+
+                <div class="form_popup" name="edit_form" id="{{record.blog_id}}">
+                  <form action="/update" class="form_container">
+                    <!--<h1>Edit Blog</h1>-->
+                    <p>#{{record.blog_id}}</p>
+                    <label for="blog_title"><b>Edit title:</b></label>
+                    <input type="text"  class="edit_title" name="blog_title" id="{{record.blog_id}}" value="{{record.blog_title}}" required>
+
+                    <label for="blog_text"><b>Edit blog post:</b></label>
+                    <textarea class="edit_blog_text" name="blog_text" id="{{record.blog_id}}" required rows="20" cols="60">{{record.blog_txt}}</textarea>
+                    <div class="edit_form_action_buttons">
+                      <button type="button" class="close_edit_form" id="{{record.blog_id}}">CLOSE</button>
+                      <button type="submit" class="edit_submit" id="{{record.blog_id}}">UPDATE</button>
+                      <button type="button" class="edit_cancel" id="{{record.blog_id}}">DISCARD</button>
+                    </div>
+                  </form>
+                </div>
+                     
+              <input type="button" class="edit_button" id="{{record.blog_id}}" name="edit_button" value="EDIT BLOG">
+              <input type="button" class="delete_button" id="{{record.blog_id}}" name="delete_button" value="DELETE BLOG">
             </div>
           </div>
         {% endfor%}
@@ -55,79 +71,130 @@
     </form>
 
     <hr>
-
-    <h2>Edit a blog post</h2>
-    <form action="/update" method="POST">
-      <div>
-        <label for="blog">Blog post # to edit:</label>
-      </div>
-      <br>
-      <div>
-        <textarea name="blog" id="blog" rows="1" cols="6"></textarea>
-      </div>
-      <div>
-        <input type="submit" value="Retrieve Post">
-      </div>
-
-
-      <!-- need to have 2 forms ??? -->
-      <br>
-      <div>
-        <label for="blog">Edit blog post:</label>
-      </div>
-      <div>
-        <!-- ? correct use of liquid variable for 'value'? (res.body.blog)? -->
-        <textarea name="blog" id="blog" rows="3" cols="40" value="{{existingBlogText}}"></textarea>
-      </div>
-      <div>
-        <!-- <button>Send my blog</button> -->
-      </div>
-    </form>
-
     <hr>
+  </body>
 
-</body>
+
   <script>
     // after HTML is loaded, perform JS actions on content
     window.addEventListener("DOMContentLoaded", domLoadedHandler);
-    console.log("entering script...");
 
+    // Load necessary functionality
     function domLoadedHandler() {
       console.log("DOM content loaded...");
+      let deleteButtons = document.getElementsByClassName("delete_button");
+      let editButtons = document.getElementsByClassName("edit_button");
+      let editCancelButtons = document.getElementsByClassName("edit_cancel");
+      let closeEditFormButtons = document.getElementsByClassName("close_edit_form");
+      let editSubmitFormButtons = document.getElementsByClassName("edit_submit");
 
-      let deleteButtonS = document.getElementsByClassName("delete_button");
-      for (let i = 0; i < deleteButtonS.length; i++) {
-        deleteButtonS[i].addEventListener("click", deleteClickHandler);
+      for (let i = 0; i < deleteButtons.length; i++) {
+        deleteButtons[i].addEventListener("click", deleteClickHandler);
+        editButtons[i].addEventListener("click", editClickHandler);        
+        editCancelButtons[i].addEventListener("click", editCancelClickHandler);        
+        closeEditFormButtons[i].addEventListener("click", closeEditFormClickHandler);        
+        editSubmitFormButtons[i].addEventListener("click", editSubmitFormClickHandler);        
+
       }
 
     }
+
+    // handler for EDIT FORM CLOSE button (in pop up edit form)
+    function closeEditFormClickHandler(event){
+      let button = event.target;
+      let popupElements = document.getElementsByClassName("form_popup");
+      for(i=0; i < popupElements.length; i++){
+        if(popupElements[i].id == button.id){
+          popupElements[i].style.display="none";
+          break;  
+        }
+      }  
+    }
+
+    // handler for EDIT CANCEL button (in pop up edit form)
+    function editCancelClickHandler(event){
+      let button = event.target;
+      let popupElements = document.getElementsByClassName("form_popup");
+      for(i=0; i < popupElements.length; i++){
+        if(popupElements[i].id == button.id){
+          popupElements[i].style.display="none";
+          break;
+        }
+      }  
+// ?? IS THERE A BETTER WAY TO UPDATE??
+     window.location.reload();  
+    }
+
+    // handler for EDIT button (show pop up edit form)
+    function editClickHandler(event) {
+      let button = event.target;
+      console.log("testing for correct (edit_button) button_id# : "+button.id);
+      let popupElements = document.getElementsByClassName("form_popup");
+      for(i=0; i < popupElements.length; i++){
+        if(popupElements[i].id == button.id){
+          popupElements[i].style.display="block";
+          break;
+        }
+      }
+    }
+
+    // handler for UPDATE button / POST request
+    async function editSubmitFormClickHandler(event){
+      let button = event.target;
+      let editFormTextAreaElements = document.getElementsByClassName("edit_blog_text");
+      for(i=0; i < editFormTextAreaElements.length; i++){
+        if(editFormTextAreaElements[i].id == button.id){
+          val = editFormTextAreaElements[i].value;
+          break;
+        }
+      }
+      let data =  { "id": button.id, 
+                    "value" : val
+                  };
+      let json = JSON.stringify(data); 
+      response = await fetch("/update", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: json 
+      }).then(() => {
+// ?? better way to update page without reloading everything?
+          window.location.reload();
+        })
+// ?? how to do this before .then() ?? Or within .then() before reload?
+ /*     if(response.ok){
+        console.log(response);
+      } else {
+        console.log("Something went wrong in fetch(update)");
+     } 
+ */   }
+
     // handler for DELETE button / POST request
     async function deleteClickHandler(event) {
       let button = event.target;
-      console.log("testing for correct blog_id# : " + button.id);
-
+      console.log("testing for correct blog_id# : "+button.id);
       let data = { "id": button.id, "name" : "delete_button"};
-      let json = JSON.stringify(data);
-      console.log("Body params: "+json);
-     
+      let json = JSON.stringify(data);     
       response = await fetch("/delete", {
           method: "POST",
           headers: {
-           // "Accept": "application/json",
             "Content-Type": "application/json"
           },
           body: 
             json 
       }).then(() => {
+// ?? better way to update page without reloading everything?
           window.location.reload();
         })
-      if(response.ok){
+// ?? how to do this before .then() ?? Or within .then() before reload?
+/*      if(response.ok){
         console.log(response);
       } else {
         console.log("Something went wrong in fetch(delete)");
       } 
      
-
+*/
     
 
     }
