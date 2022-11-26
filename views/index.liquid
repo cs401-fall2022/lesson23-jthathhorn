@@ -11,7 +11,7 @@
   </head>
 
   <body>
-    <h1>The Blog</h1>
+    <h1>El Blog</h1>
     <hr>
     <div class="main">
       <div id="nav">
@@ -22,31 +22,33 @@
         {% for record in data%}
           <div class="blog_element">
             <p style="font-size: smaller; color: black"># {{record.blog_id}}</p>
-  <!-- ADD blog TITLE HERE (use SPAN?)*/ -->
-            <p style="font-size: larger; color: black">
-              ADD blog TITLE HERE
-            </p>
-            <p id="blog_text">{{record.blog_txt}}</p>
+            <!-- ADD blog TITLE HERE (use SPAN?)*/ -->
+            <p class="blog_title" id="{{record.blog_id}}" style="font-size: larger; color: black">{{record.blog_title}}</p>
+            <p class="blog_text" id="{{record.blog_id}}">{{record.blog_text}}</p>
 
             <div class="edit_delete">
 
-                <div class="form_popup" name="edit_form" id="{{record.blog_id}}">
-                  <form action="/update" class="form_container">
-                    <!--<h1>Edit Blog</h1>-->
-                    <p>#{{record.blog_id}}</p>
-                    <label for="blog_title"><b>Edit title:</b></label>
-                    <input type="text"  class="edit_title" name="blog_title" id="{{record.blog_id}}" value="{{record.blog_title}}" required>
+              <div class="form_popup" name="edit_form" id="{{record.blog_id}}">
+                <form action="/update" class="form_container">
+                  <!--<h1>Edit Blog</h1>-->
+                  <p>#{{record.blog_id}}</p>
+                  <label for="blog_title">
+                    <b>Edit title:</b>
+                  </label>
+                  <input type="text" class="edit_title" name="blog_title" id="{{record.blog_id}}" value="{{record.blog_title}}" required>
 
-                    <label for="blog_text"><b>Edit blog post:</b></label>
-                    <textarea class="edit_blog_text" name="blog_text" id="{{record.blog_id}}" required rows="20" cols="60">{{record.blog_txt}}</textarea>
-                    <div class="edit_form_action_buttons">
-                      <button type="button" class="close_edit_form" id="{{record.blog_id}}">CLOSE</button>
-                      <button type="submit" class="edit_submit" id="{{record.blog_id}}">UPDATE</button>
-                      <button type="button" class="edit_cancel" id="{{record.blog_id}}">DISCARD</button>
-                    </div>
-                  </form>
-                </div>
-                     
+                  <label for="blog_text">
+                    <b>Edit blog post:</b>
+                  </label>
+                  <textarea class="edit_blog_text" name="blog_text" id="{{record.blog_id}}" required rows="20" cols="60">{{record.blog_text}}</textarea>
+                  <div class="edit_form_action_buttons">
+                    <button type="button" class="close_edit_form" id="{{record.blog_id}}">CLOSE</button>
+                    <button type="button" class="edit_submit" id="{{record.blog_id}}">UPDATE</button>
+                    <button type="button" class="edit_discard" id="{{record.blog_id}}">DISCARD</button>
+                  </div>
+                </form>
+              </div>
+
               <input type="button" class="edit_button" id="{{record.blog_id}}" name="edit_button" value="EDIT BLOG">
               <input type="button" class="delete_button" id="{{record.blog_id}}" name="delete_button" value="DELETE BLOG">
             </div>
@@ -59,11 +61,19 @@
 
     <h2>Post a new blog</h2>
     <form action="/add" method="POST">
+
       <div>
-        <label for="blog">Blog text:</label>
+        <label for="blog_title">Blog title:</label>
       </div>
       <div>
-        <textarea name="blog" id="blog" rows="3" cols="40"></textarea>
+        <input type="text" name="blog_title" required>
+      </div>
+
+      <div>
+        <label for="blog_text">Blog text:</label>
+      </div>
+      <div>
+        <textarea name="blog_text" id="blog_text" rows="3" cols="40"></textarea>
       </div>
       <div>
         <button>Send my blog</button>
@@ -74,130 +84,161 @@
     <hr>
   </body>
 
-
   <script>
-    // after HTML is loaded, perform JS actions on content
-    window.addEventListener("DOMContentLoaded", domLoadedHandler);
 
-    // Load necessary functionality
+    var blogTitleOnEditOpen = null;
+    var blogTextOnEditOpen = null;
+    var dataOnEditOpenFree = true;
+      // after HTML is loaded, perform JS actions on content
+    window.addEventListener("DOMContentLoaded", domLoadedHandler);
+      // Load necessary functionality
     function domLoadedHandler() {
       console.log("DOM content loaded...");
       let deleteButtons = document.getElementsByClassName("delete_button");
       let editButtons = document.getElementsByClassName("edit_button");
-      let editCancelButtons = document.getElementsByClassName("edit_cancel");
-      let closeEditFormButtons = document.getElementsByClassName("close_edit_form");
+      let editDiscardButtons = document.getElementsByClassName("edit_discard");
       let editSubmitFormButtons = document.getElementsByClassName("edit_submit");
 
       for (let i = 0; i < deleteButtons.length; i++) {
         deleteButtons[i].addEventListener("click", deleteClickHandler);
-        editButtons[i].addEventListener("click", editClickHandler);        
-        editCancelButtons[i].addEventListener("click", editCancelClickHandler);        
-        closeEditFormButtons[i].addEventListener("click", closeEditFormClickHandler);        
-        editSubmitFormButtons[i].addEventListener("click", editSubmitFormClickHandler);        
-
+        editButtons[i].addEventListener("click", editClickHandler);
+// register these listeners only for specific elements, when its edit form is opened? (save loading unused code)
+        editDiscardButtons[i].addEventListener("click", editDiscardClickHandler);
+        editSubmitFormButtons[i].addEventListener("click", editSubmitFormClickHandler);
       }
-
     }
-
-    // handler for EDIT FORM CLOSE button (in pop up edit form)
-    function closeEditFormClickHandler(event){
+      // handler for EDIT DISCARD button (in pop up edit form)
+    function editDiscardClickHandler(event) {
       let button = event.target;
       let popupElements = document.getElementsByClassName("form_popup");
-      for(i=0; i < popupElements.length; i++){
-        if(popupElements[i].id == button.id){
-          popupElements[i].style.display="none";
-          break;  
-        }
-      }  
-    }
-
-    // handler for EDIT CANCEL button (in pop up edit form)
-    function editCancelClickHandler(event){
-      let button = event.target;
-      let popupElements = document.getElementsByClassName("form_popup");
-      for(i=0; i < popupElements.length; i++){
-        if(popupElements[i].id == button.id){
-          popupElements[i].style.display="none";
+      for (i = 0; i < popupElements.length; i ++) {
+        if (popupElements[i].id == button.id) {
+          popupElements[i].style.display = "none"; // hide edit popup form
+            // re-assign original values to form fields
+          let editFormTitleElements = document.getElementsByClassName("edit_title");
+          let editFormTextAreaElements = document.getElementsByClassName("edit_blog_text");
+          editFormTitleElements[i].value = blogTitleOnEditOpen;
+          editFormTextAreaElements[i].value = blogTextOnEditOpen;
           break;
         }
-      }  
-// ?? IS THERE A BETTER WAY TO UPDATE??
-     window.location.reload();  
+      } // reset 'global' variables
+      blogTitleOnEditOpen = null;
+      blogTextOnEditOpen = null;
+      dataOnEditOpenFree = true;
     }
 
-    // handler for EDIT button (show pop up edit form)
+      // handler for EDIT button (show pop up edit form)
     function editClickHandler(event) {
-      let button = event.target;
-      console.log("testing for correct (edit_button) button_id# : "+button.id);
-      let popupElements = document.getElementsByClassName("form_popup");
-      for(i=0; i < popupElements.length; i++){
-        if(popupElements[i].id == button.id){
-          popupElements[i].style.display="block";
-          break;
+      if(dataOnEditOpenFree){
+        dataOnEditOpenFree = false;// don't allow mulitiple blog edits concurrently--will not properly re-populate edit form field values
+        let button = event.target;
+          // store edit form title and text values upon form open, for replacement in case of DISCARD changes
+        blogTitleElements = document.getElementsByClassName("blog_title");
+        blogTextElements = document.getElementsByClassName("blog_text");
+        for (i = 0; i < blogTitleElements.length; i++) {
+          if (blogTitleElements[i].id == button.id) {
+            blogTitleOnEditOpen = blogTitleElements[i].textContent; // alt use .textContent() ??
+            blogTextOnEditOpen = blogTextElements[i].textContent;
+            break;
+          }
+        }
+          // get popup form elements to set display to visible on 'this' form
+        let popupElements = document.getElementsByClassName("form_popup");
+        for (i = 0; i < popupElements.length; i ++) {
+          if (popupElements[i].id == button.id) {
+            popupElements[i].style.display = "block";
+            break;
+          }
         }
       }
+      else{
+        console.log("Error: trying to access blog EDIT form while dataOnEditOpenFree is false. One blog edit at a time (UPDATE or DISCARD and proceed)");
+      }
     }
-
-    // handler for UPDATE button / POST request
-    async function editSubmitFormClickHandler(event){
+      // handler for UPDATE button / POST request
+    async function editSubmitFormClickHandler(event) {
       let button = event.target;
+      let editFormTitleElements = document.getElementsByClassName("edit_title");
       let editFormTextAreaElements = document.getElementsByClassName("edit_blog_text");
-      for(i=0; i < editFormTextAreaElements.length; i++){
-        if(editFormTextAreaElements[i].id == button.id){
-          val = editFormTextAreaElements[i].value;
+      var i;
+      for (i = 0; i < editFormTextAreaElements.length; i++) {
+        if (editFormTextAreaElements[i].id == button.id) {
+          var editedText = editFormTextAreaElements[i].value; // alt use .textContent() ??
+          var editedTitle = editFormTitleElements[i].value;
           break;
         }
-      }
-      let data =  { "id": button.id, 
-                    "value" : val
-                  };
-      let json = JSON.stringify(data); 
-      response = await fetch("/update", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: json 
-      }).then(() => {
-// ?? better way to update page without reloading everything?
-          window.location.reload();
-        })
-// ?? how to do this before .then() ?? Or within .then() before reload?
- /*     if(response.ok){
-        console.log(response);
-      } else {
-        console.log("Something went wrong in fetch(update)");
-     } 
- */   }
-
-    // handler for DELETE button / POST request
-    async function deleteClickHandler(event) {
-      let button = event.target;
-      console.log("testing for correct blog_id# : "+button.id);
-      let data = { "id": button.id, "name" : "delete_button"};
-      let json = JSON.stringify(data);     
-      response = await fetch("/delete", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: 
-            json 
-      }).then(() => {
-// ?? better way to update page without reloading everything?
-          window.location.reload();
-        })
-// ?? how to do this before .then() ?? Or within .then() before reload?
-/*      if(response.ok){
-        console.log(response);
-      } else {
-        console.log("Something went wrong in fetch(delete)");
-      } 
-     
-*/
-    
-
+      } // prepare values for JSON fetch request
+      let data = { 
+        "id": button.id,
+        "value": editedText,
+        "title": editedTitle
+      };
+      let json = JSON.stringify(data);
+      let response = await fetch("/edit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: json
+      }).then(async function(response) {
+        console.log("/edit fetch() response.ok status: " + response.ok);
+          // make sure POST request was successful, then update title, text
+        if (response.ok) {
+          let pElementsBlogText = document.getElementsByClassName("blog_text");
+          let pElementsBlogTitle = document.getElementsByClassName("blog_title");
+            // make sure button and pElements are correctly associated--change in elements arrays conceivable? (e.g. if another operation/database change and page reload changed the element array size/contents?)
+          if (pElementsBlogText[i].id == button.id) {
+            pElementsBlogText[i].textContent = editedText;
+            pElementsBlogTitle[i].textContent = editedTitle;
+            // hide blog edit form after successful update
+          let popupElements = document.getElementsByClassName("form_popup");
+          for (i = 0; i < popupElements.length; i ++) {
+            if (popupElements[i].id == button.id) {
+              popupElements[i].style.display = "none";       
+              break;
+            }
+          }          
+          } else {
+            console.log("Error: Order of blog_text <p> elements unexpected ( editSubmitFormClickHandler() )");
+          }
+          dataOnEditOpenFree = true; // release global variable to allow another edit popup form
+        }
+// ?? best way to throw error? 
+        else {
+          console.log("ERROR: POST request was unsuccessful");
+        } // reset 'global' variables
+      let blogTitleOnEditOpen = null;
+      let blogTextOnEditOpen = null;
+      }).catch((error) => {
+        console.error("ERROR: " + error);
+      });
     }
- 
+
+      // handler for DELETE button / POST request
+    async function deleteClickHandler(event) {
+      if (confirm("DELETE BLOG??")) {
+        let button = event.target;
+        console.log("testing for correct blog_id# : " + button.id);
+        let data = {
+          "id": button.id,
+          "name": "delete_button"
+        };
+        let json = JSON.stringify(data);
+        response = await fetch("/delete", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: json
+        }).then(() => {
+
+  // ?? parentNode --> removeChild() at that index??
+
+// NEED to use DOM manipulation upon SUCCESSful server delete operation for
+// ?? BETTER way to update page without reloading
+          window.location.reload();
+        });
+      }
+    }
   </script>
 </html>

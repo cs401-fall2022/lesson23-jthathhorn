@@ -11,31 +11,31 @@ router.get('/', function (req, res, next) {
         console.log("Getting error " + err);
         exit(1);
       }
-      //Query if the table exists if not lets create it on the fly!
+      //Query if the table exists; if not, create new table
       db.all(`SELECT name FROM sqlite_master WHERE type='table' AND name='blog'`,
         (err, rows) => {
           if (rows.length === 1) {
             console.log("Table exists!");
-            db.all(` SELECT blog_id, blog_txt FROM blog`, (err, rows) => {
+            db.all(`SELECT blog_id, blog_title, blog_text FROM blog`, (err, rows) => {
               console.log("returning " + rows.length + " records");
               // reverse order of 'rows' array to load newest blogs first
               let newRows = [];
-              for(i=0; i<rows.length;i++){
+              for(i=0; i < rows.length; i++){
                 newRows[i] = rows[(rows.length - 1) - i];
               }
-              res.render('index', { title: 'Blog', data: newRows });
               db.close();
+              res.render('index', { title: 'Blog', data: newRows });
             });
           } else {
             console.log("Creating table and inserting some sample data");
             db.exec(`CREATE table blog (
                      blog_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                     blog_txt text NOT NULL);
-                      INSERT into blog (blog_txt)
-                      VALUES ('This is a great blog'),
-                             ('Oh my goodness blogging is fun');`,
+                     blog_title NOT NULL,
+                     blog_text text NOT NULL);
+                      INSERT into blog (blog_title, blog_text) 
+                      VALUES ('Blog #1 Title','This is the first new blog');`,
               () => {
-                db.all(` SELECT blog_id, blog_txt FROM blog`, (err, rows) => {
+                db.all(` SELECT blog_id, blog_title, blog_text FROM blog`, (err, rows) => {
                   // reverse order of 'rows' array to load newest blogs first      
                   let newRows = [];
                   for(i=0; i<rows.length;i++){
@@ -46,10 +46,11 @@ router.get('/', function (req, res, next) {
                 });
               });
           }
+
         });
     });
 });
-
+// Add a new blog post
 router.post('/add', (req, res, next) => {
   console.log("Adding (sanitized) blog entry to table")
   var db = new sqlite3.Database('mydb.sqlite3',
@@ -59,9 +60,15 @@ router.post('/add', (req, res, next) => {
         console.log("Getting error " + err);
         exit(1);
       }
-      console.log("inserting " + req.body.blog);
       // sanitized statement
-      db.run('INSERT into blog (blog_txt) VALUES (?);', req.body.blog);
+      db.run('INSERT into blog (blog_title, blog_text) VALUES ((?), (?));', 
+            req.body.blog_title, req.body.blog_text,
+            function(err){
+              if(err){
+                return console.error("ERROR: "+err.message);
+              }
+              console.log(`Row(s) added: ${this.changes}`);
+            });
       db.close();
       //redirect to homepage
       res.redirect('/');
@@ -70,7 +77,7 @@ router.post('/add', (req, res, next) => {
 })
 
 // edit / update blog post
-router.post('/update', (req, res, next) => {
+router.post('/edit', (req, res, next) => {
   var db = new sqlite3.Database('mydb.sqlite3',
     sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
     (err) => {
@@ -80,14 +87,23 @@ router.post('/update', (req, res, next) => {
       }
       console.log("Editing blog post # " + req.body.id);
       // sanitized statement
-      db.run('UPDATE blog SET blog_txt=(?) WHERE blog_id=(?)', req.body.value, req.body.id)
+      db.run('UPDATE blog SET blog_title=(?), blog_text=(?) WHERE blog_id=(?);', 
+              req.body.title, req.body.value, req.body.id,
+              function(err){
+                if(err){
+                  return console.error("ERROR: "+err.message);
+                }
+                console.log(`Row(s) updated: ${this.changes}`);
+              });  
       db.close();
       res.redirect('/');
     }
   );
+ //   res.redirect('/');
+
 })
 
-
+// delete a blog post
 router.post('/delete', (req, res, next) => {
   
 // ?? need to VALIDATE data before delete / handle err ??
@@ -98,10 +114,16 @@ router.post('/delete', (req, res, next) => {
         console.log("Getting error " + err);
         exit(1);
       }
-      console.log(req.body);
       console.log("Deleting blog post # " + req.body.id);
       // sanitized statement
-      db.run('DELETE from blog WHERE blog_id=(?)', req.body.id);
+      db.run('DELETE from blog WHERE blog_id=(?)', 
+              req.body.id,
+              function(err){
+                if(err){
+                  return console.error("ERROR: "+err.message);
+                }
+                console.log(`Row(s) deleted: ${this.changes}`);
+              });
       db.close();
       res.redirect('/');
     }

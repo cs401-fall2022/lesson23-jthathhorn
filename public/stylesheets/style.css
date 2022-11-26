@@ -4,19 +4,22 @@ body{
   margin: auto;
   margin-bottom: 3%;
   /* border: 3px green solid; */
-  background-color: hsl(187, 20%, 17%);
+  background-color: hsl(186, 44%, 8%);
   font-size: 14pt;
-  color: azure;
+  color: rgb(255, 255, 255);
 }
 .main > #nav{
     display: flex;
     gap: 0px;
     flex-direction: column;
-    justify-content: center;
+    /* justify-content: center; */
     /* border: 2px rgb(106, 242, 21) solid; */
     margin-left: 2px;
     margin-right: 2px; 
-}
+    max-width: 10%;
+    font-size: 12pt;
+    text-shadow: -1px 2px 2px rgb(239, 8, 8); 
+  }
 body > .main{
   display: flex;
   gap: 0px;
@@ -31,7 +34,7 @@ a {
 .main > #container_blog {
   display: flex;
   flex-direction: column;
-  flex-grow: .8;
+  flex-grow: 1;
   justify-content: center;
   gap: 10px;
   /* border: 1px rgb(196, 85, 5) solid; */
@@ -47,7 +50,7 @@ a {
   border-radius: 10px;
   border: 3px double rgb(196, 10, 10);
   padding: 0px;
-  background-color: rgb(235, 236, 221);
+  background-color: rgb(239, 235, 224);
 }
 .blog_element > p{
   margin: 3px;
@@ -61,7 +64,7 @@ a {
   display: flex;
   justify-content: flex-end;
 }
-.edit_delete .delete_button, .edit_cancel{
+.edit_delete .delete_button, .edit_discard{
   background-color: rgb(196, 10, 10);
   color: white;
 }
@@ -78,8 +81,8 @@ a {
   padding: 5px;
   color: black;
   border-radius: 5px;
-  border: 3px solid rgb(196, 10, 10);
-  background-color: rgb(235, 236, 221);
+  border: 1px solid rgb(196, 10, 10);
+  background-color: rgb(239, 235, 224);
 }
 .form_container{
   display: flex;
@@ -96,18 +99,21 @@ a {
 .edit_form_action_buttons > button{
 width: 90px;
 }
-.blog_element > #blog_text{
+.blog_element > .blog_text{
   margin: 5%;
-  color:rgb(1, 25, 17);
+  color:rgb(0, 0, 0);
   text-align: left; 
 }
+p{
+  white-space: pre-wrap;
+}
 h1{
-  color: rgb(196, 10, 10);
+  color: rgb(255, 255, 255);
   font-size: 45px;
   text-align: center;
   margin-bottom: 10px;
   min-width: 200px;
-  text-shadow: -1px 1px 3px rgb(156, 153, 153); 
+  text-shadow: -2px 3px 5px rgb(239, 8, 8); 
 }
 
 
