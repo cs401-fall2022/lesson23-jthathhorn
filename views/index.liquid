@@ -11,23 +11,26 @@
   </head>
 
   <body>
-    <h1>El Blog</h1>
-    <hr>
+
     <div class="main">
+
       <div id="nav">
-        <p>NAV SECTION---plan to put blog title links here</p>
+        <p id="links_title">Blog Links</p>
+        {% for record in data%}
+        <button class="blog_links" id="{{record.blog_id}}">{{record.blog_title}}</button>
+<!-- <a href="#{{record.blog_id}}" class="blog_links">{{record.blog_title}}</a><br><br>  -->
+        {% endfor%}
       </div>
 
       <div id="container_blog">
         {% for record in data%}
-          <div class="blog_element">
-            <p style="font-size: smaller; color: black"># {{record.blog_id}}</p>
+          <div class="blog_element" id="{{record.blog_id}}">
+            <p class="blog_id"># {{record.blog_id}}</p>
             <!-- ADD blog TITLE HERE (use SPAN?)*/ -->
-            <p class="blog_title" id="{{record.blog_id}}" style="font-size: larger; color: black">{{record.blog_title}}</p>
+            <p class="blog_title" id="{{record.blog_id}}">{{record.blog_title}}</p>
             <p class="blog_text" id="{{record.blog_id}}">{{record.blog_text}}</p>
 
             <div class="edit_delete">
-
               <div class="form_popup" name="edit_form" id="{{record.blog_id}}">
                 <form action="/update" class="form_container">
                   <!--<h1>Edit Blog</h1>-->
@@ -42,7 +45,6 @@
                   </label>
                   <textarea class="edit_blog_text" name="blog_text" id="{{record.blog_id}}" required rows="20" cols="60">{{record.blog_text}}</textarea>
                   <div class="edit_form_action_buttons">
-                    <button type="button" class="close_edit_form" id="{{record.blog_id}}">CLOSE</button>
                     <button type="button" class="edit_submit" id="{{record.blog_id}}">UPDATE</button>
                     <button type="button" class="edit_discard" id="{{record.blog_id}}">DISCARD</button>
                   </div>
@@ -57,6 +59,22 @@
 
       </div>
     </div>
+
+    <div class="header">
+      <h1>El Blog</h1>
+      <hr>
+    </div>
+
+    <div class="background_homepage">
+      <br><br><br><br><br><br><br><br><br><br><br><br>
+      <p>This will be the HOME PAGE / page displayed upon loading of site and document background....</p>
+<!--  <img href="./public/images/sagg.jpeg"> put image on background/wallpaper of home page -->
+      <br><br><br><br><br><br><br><br><br><br><br><br>   
+    </div>
+
+
+<br><br><br><br><br><br><br><br>  
+
     <hr>
 
     <h2>Post a new blog</h2>
@@ -76,12 +94,12 @@
         <textarea name="blog_text" id="blog_text" rows="3" cols="40"></textarea>
       </div>
       <div>
-        <button>Send my blog</button>
+        <button>Create new blog</button>
       </div>
     </form>
 
     <hr>
-    <hr>
+
   </body>
 
   <script>
@@ -91,23 +109,40 @@
     var dataOnEditOpenFree = true;
       // after HTML is loaded, perform JS actions on content
     window.addEventListener("DOMContentLoaded", domLoadedHandler);
-      // Load necessary functionality
+      /* Registers all button listeners for functionality after DOM content loaded */
     function domLoadedHandler() {
       console.log("DOM content loaded...");
       let deleteButtons = document.getElementsByClassName("delete_button");
       let editButtons = document.getElementsByClassName("edit_button");
       let editDiscardButtons = document.getElementsByClassName("edit_discard");
       let editSubmitFormButtons = document.getElementsByClassName("edit_submit");
-
+      let blogTitleLinks = document.getElementsByClassName("blog_links");
       for (let i = 0; i < deleteButtons.length; i++) {
         deleteButtons[i].addEventListener("click", deleteClickHandler);
         editButtons[i].addEventListener("click", editClickHandler);
-// register these listeners only for specific elements, when its edit form is opened? (save loading unused code)
+        blogTitleLinks[i].addEventListener("click", titleLinkClickHandler);
+    // Future code improvement: register these listeners only for specific elements, when its edit form is opened? (save loading unused code)
         editDiscardButtons[i].addEventListener("click", editDiscardClickHandler);
         editSubmitFormButtons[i].addEventListener("click", editSubmitFormClickHandler);
       }
     }
-      // handler for EDIT DISCARD button (in pop up edit form)
+      /* handler for blog title links in Nav section */
+    function titleLinkClickHandler(event){
+      let button = event.target;
+      let blogElements = document.getElementsByClassName("blog_element");
+      let found = false;
+      for(i=0; i < blogElements.length; i++){
+        blogElements[i].style.display = "none"; // close all other blogs before opening selected blog
+      }
+      for(i=0; i < blogElements.length; i++){
+        if(blogElements[i].id == button.id){
+          blogElements[i].style.display = "flex"; // show blog associated with title button clicked
+          found = true;
+        }
+      }
+      if(!found){console.error("Error: title link id not associated with a blog element (titleLinkClickHandler())");}
+    }
+      /* handler for EDIT DISCARD button (in pop up edit form) */
     function editDiscardClickHandler(event) {
       let button = event.target;
       let popupElements = document.getElementsByClassName("form_popup");
@@ -127,13 +162,12 @@
       dataOnEditOpenFree = true;
     }
 
-      // handler for EDIT button (show pop up edit form)
+      /* handler for EDIT button (show pop up edit form) */
     function editClickHandler(event) {
       if(dataOnEditOpenFree){
         dataOnEditOpenFree = false;// don't allow mulitiple blog edits concurrently--will not properly re-populate edit form field values
         let button = event.target;
-          // store edit form title and text values upon form open, for replacement in case of DISCARD changes
-        blogTitleElements = document.getElementsByClassName("blog_title");
+        blogTitleElements = document.getElementsByClassName("blog_title");// store edit form title and text values upon form open, for replacement if DISCARD changes
         blogTextElements = document.getElementsByClassName("blog_text");
         for (i = 0; i < blogTitleElements.length; i++) {
           if (blogTitleElements[i].id == button.id) {
@@ -142,7 +176,7 @@
             break;
           }
         }
-          // get popup form elements to set display to visible on 'this' form
+          // get popup FORM elements to set display to visible on 'this' form
         let popupElements = document.getElementsByClassName("form_popup");
         for (i = 0; i < popupElements.length; i ++) {
           if (popupElements[i].id == button.id) {
@@ -151,11 +185,10 @@
           }
         }
       }
-      else{
-        console.log("Error: trying to access blog EDIT form while dataOnEditOpenFree is false. One blog edit at a time (UPDATE or DISCARD and proceed)");
-      }
+      else{console.log("Error: trying to access blog EDIT form while dataOnEditOpenFree is false. One blog edit at a time (UPDATE or DISCARD and proceed)");
+            window.alert("Another blog edit form is open--UPDATE or DISCARD before editing another blog");}
     }
-      // handler for UPDATE button / POST request
+      /* handler for UPDATE button / POST request */
     async function editSubmitFormClickHandler(event) {
       let button = event.target;
       let editFormTitleElements = document.getElementsByClassName("edit_title");
@@ -171,16 +204,13 @@
       let data = { 
         "id": button.id,
         "value": editedText,
-        "title": editedTitle
-      };
+        "title": editedTitle };
       let json = JSON.stringify(data);
       let response = await fetch("/edit", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: {"Content-Type": "application/json"},
         body: json
-      }).then(async function(response) {
+      }).then(function(response) {
         console.log("/edit fetch() response.ok status: " + response.ok);
           // make sure POST request was successful, then update title, text
         if (response.ok) {
@@ -198,15 +228,11 @@
               break;
             }
           }          
-          } else {
-            console.log("Error: Order of blog_text <p> elements unexpected ( editSubmitFormClickHandler() )");
-          }
-          dataOnEditOpenFree = true; // release global variable to allow another edit popup form
+          } else {console.log("Error: Order of blog_text <p> elements unexpected ( editSubmitFormClickHandler() )");}
+          dataOnEditOpenFree = true; // release global variable to allow use by another edit popup form
         }
-// ?? best way to throw error? 
-        else {
-          console.log("ERROR: POST request was unsuccessful");
-        } // reset 'global' variables
+      // ?? best way to throw error? 
+        else {console.log("ERROR: POST request was unsuccessful");} // reset 'global' variables
       let blogTitleOnEditOpen = null;
       let blogTextOnEditOpen = null;
       }).catch((error) => {
@@ -214,31 +240,44 @@
       });
     }
 
-      // handler for DELETE button / POST request
+      /* handler for DELETE operation / POST request */
     async function deleteClickHandler(event) {
-      if (confirm("DELETE BLOG??")) {
-        let button = event.target;
-        console.log("testing for correct blog_id# : " + button.id);
-        let data = {
-          "id": button.id,
-          "name": "delete_button"
-        };
-        let json = JSON.stringify(data);
-        response = await fetch("/delete", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: json
-        }).then(() => {
-
-  // ?? parentNode --> removeChild() at that index??
-
-// NEED to use DOM manipulation upon SUCCESSful server delete operation for
-// ?? BETTER way to update page without reloading
-          window.location.reload();
-        });
+      if(dataOnEditOpenFree){
+        if (confirm("DELETE BLOG??")) { // prompt user to confirm DELETE
+          let button = event.target;
+          let data = {
+            "id": button.id,
+            "name": "delete_button"
+          };
+          let json = JSON.stringify(data);
+          response = await fetch("/delete", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: json
+          }).then((response) => { // if request success, delete the blog element and nav title link in DOM to reflect update
+            if (response.ok) {
+              let blogElements = document.getElementsByClassName("blog_element");
+              let blogTitleLinks = document.getElementsByClassName("blog_links");
+              let found = false;
+              for(i=0; i < blogElements.length; i++){
+                if ( (blogElements[i].id == button.id) && (blogTitleLinks[i].id == button.id) ){ // make sure both link and blog element match
+                  let blogElementToDelete = blogElements[i];
+                  let titleLinkElementToDelete = blogTitleLinks[i];
+                  blogElementToDelete.parentNode.removeChild(blogElementToDelete);
+                  titleLinkElementToDelete.parentNode.removeChild(titleLinkElementToDelete);
+                  found = true;
+                  break;
+                }
+              }if(!found){console.error("Error: blog element to delete not found");}
+            }else{console.error("Error: something went wrong in /delete request (deleteClickHandler())");}
+          }).catch((err) =>{
+            console.error("Error: something f'd up in deleteClickHandler request: "+err);
+          });
+        }
       }
+      else{window.alert("Cannot DELETE a blog until other blog edit form is resolved");}
     }
   </script>
 </html>
