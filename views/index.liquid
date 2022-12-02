@@ -68,7 +68,7 @@
     <div class="background_homepage">
       <br><br><br><br><br><br><br><br><br><br><br><br>
       <p>This will be the HOME PAGE / page displayed upon loading of site and document background....</p>
-<!--  <img href="./public/images/sagg.jpeg"> put image on background/wallpaper of home page -->
+  <!-- <img src="../public/images/     "  width="700px" height="500"> put image on background/wallpaper of home page -->
       <br><br><br><br><br><br><br><br><br><br><br><br>   
     </div>
 
@@ -103,6 +103,10 @@
   </body>
 
   <script>
+
+// "@types/yargs" : "^17.0.15" 
+// LIGHTHOUSE---CHECK accessibility, etc
+
 
     var blogTitleOnEditOpen = null;
     var blogTextOnEditOpen = null;
@@ -193,7 +197,6 @@
       let button = event.target;
       let editFormTitleElements = document.getElementsByClassName("edit_title");
       let editFormTextAreaElements = document.getElementsByClassName("edit_blog_text");
-      var i;
       for (i = 0; i < editFormTextAreaElements.length; i++) {
         if (editFormTextAreaElements[i].id == button.id) {
           var editedText = editFormTextAreaElements[i].value; // alt use .textContent() ??
@@ -231,10 +234,9 @@
           } else {console.log("Error: Order of blog_text <p> elements unexpected ( editSubmitFormClickHandler() )");}
           dataOnEditOpenFree = true; // release global variable to allow use by another edit popup form
         }
-      // ?? best way to throw error? 
         else {console.log("ERROR: POST request was unsuccessful");} // reset 'global' variables
-      let blogTitleOnEditOpen = null;
-      let blogTextOnEditOpen = null;
+        let blogTitleOnEditOpen = null;
+        let blogTextOnEditOpen = null;
       }).catch((error) => {
         console.error("ERROR: " + error);
       });
@@ -247,7 +249,6 @@
           let button = event.target;
           let data = {
             "id": button.id,
-            "name": "delete_button"
           };
           let json = JSON.stringify(data);
           response = await fetch("/delete", {

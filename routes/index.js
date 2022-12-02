@@ -74,7 +74,7 @@ router.post('/add', (req, res, next) => {
       res.redirect('/');
     }
   );
-})
+});
 
 // edit / update blog post
 router.post('/edit', (req, res, next) => {
@@ -101,7 +101,7 @@ router.post('/edit', (req, res, next) => {
   );
  //   res.redirect('/');
 
-})
+});
 
 // delete a blog post
 router.post('/delete', (req, res, next) => {
